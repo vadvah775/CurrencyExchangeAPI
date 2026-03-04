@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDAOImpl implements CurrencyDAO{
+public class CurrencyDAOImpl implements CurrencyDAO {
 
     ConnectionPool connectionPool;
 
@@ -18,10 +18,10 @@ public class CurrencyDAOImpl implements CurrencyDAO{
     @Override
     public List<Currency> getAllCurrencies() throws SQLException {
         List<Currency> allCurrencies = new ArrayList<>();
-        try(Connection connection = connectionPool.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             Statement stmt = connection.createStatement();
             ResultSet resultSet = stmt.executeQuery("SELECT * FROM currencies;");
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 allCurrencies.add(createCurrencies(resultSet));
             }
         }
@@ -30,15 +30,31 @@ public class CurrencyDAOImpl implements CurrencyDAO{
 
     @Override
     public Optional<Currency> getCurrencyByCode(String code) throws SQLException {
-        String sqlQuerry = "SELECT * FROM currencies WHERE code=?";
+        String sql = "SELECT * FROM currencies WHERE code=?";
+
         try (Connection connection = connectionPool.getConnection()) {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuerry);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, code);
             ResultSet resultSet = stmt.executeQuery();
-            if(!resultSet.next()){
+            if (!resultSet.next()) {
                 return Optional.empty();
             }
             return Optional.of(createCurrencies(resultSet));
+        }
+    }
+
+    @Override
+    public Optional<Currency> addCurrency(Currency currency) throws SQLException {
+        String sql = "INSERT INTO currencies (code, full_name, sign) VALUES (?,?,?)";
+
+        try (Connection connection = connectionPool.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, currency.getCode());
+            stmt.setString(2, currency.getFullName());
+            stmt.setString(3, currency.getSign());
+            stmt.executeUpdate();
+
+            return getCurrencyByCode(currency.getCode());
         }
     }
 

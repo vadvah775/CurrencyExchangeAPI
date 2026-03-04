@@ -47,7 +47,7 @@ public class CurrencyServlet extends HttpServlet {
             mapper.writeValue(resp.getWriter(), currency.get());
             resp.setStatus(200);
         } catch (SQLException e) {
-            ErrorHandler.sendError(501, "Data base error", resp);
+            ErrorHandler.sendError(500, "Data base error", resp);
         } catch (IOException e) {
             ErrorHandler.sendError(500, "Fatal error", resp);
         }

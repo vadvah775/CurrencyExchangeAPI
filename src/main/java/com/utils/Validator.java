@@ -7,8 +7,10 @@ public class Validator {
         if (code == null || code.equals("/")) {
             return Optional.empty();
         }
+        String currencyCode = code;
+        if(code.charAt(0) == '/')
+            currencyCode = code.substring(1);
 
-        String currencyCode = code.substring(1);
         if(currencyCode.matches("[A-Z]{3}$")){
             return Optional.of(currencyCode);
         }
