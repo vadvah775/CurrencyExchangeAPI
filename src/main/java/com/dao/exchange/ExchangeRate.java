@@ -1,11 +1,13 @@
 package com.dao.exchange;
 
 import com.dao.currency.Currency;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
 public class ExchangeRate {
     private Integer id;
     private Currency baseCurrency;
