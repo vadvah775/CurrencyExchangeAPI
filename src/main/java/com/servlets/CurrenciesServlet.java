@@ -72,6 +72,7 @@ public class CurrenciesServlet extends HttpServlet {
                 return;
             }
             mapper.writeValue(resp.getWriter(), newCurrency.get());
+            resp.setStatus(201);
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
                 ErrorHandler.sendError(409, "The currency with this code already exists.", resp);
