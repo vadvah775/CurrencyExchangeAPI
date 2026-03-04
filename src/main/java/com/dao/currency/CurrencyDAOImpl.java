@@ -5,6 +5,7 @@ import com.dao.ConnectionPool;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CurrencyDAOImpl implements CurrencyDAO{
 
@@ -28,16 +29,16 @@ public class CurrencyDAOImpl implements CurrencyDAO{
     }
 
     @Override
-    public Currency getCurrencyByCode(String code) throws SQLException {
+    public Optional<Currency> getCurrencyByCode(String code) throws SQLException {
         String sqlQuerry = "SELECT * FROM currencies WHERE code=?";
         try (Connection connection = connectionPool.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(sqlQuerry);
             stmt.setString(1, code);
             ResultSet resultSet = stmt.executeQuery();
             if(!resultSet.next()){
-                return null;
+                return Optional.empty();
             }
-            return createCurrencies(resultSet);
+            return Optional.of(createCurrencies(resultSet));
         }
     }
 

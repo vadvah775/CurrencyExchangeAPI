@@ -1,8 +1,10 @@
 package com.servlets;
 
+import com.dao.currency.Currency;
 import com.dao.currency.CurrencyDAO;
 import com.dao.currency.CurrencyDAOImpl;
 import com.utils.ErrorHandler;
+import com.utils.Validator;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,6 +15,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 @WebServlet(name = "currency-servlet", value = "/currency/*")
 public class CurrencyServlet extends HttpServlet {
@@ -26,22 +29,27 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        String pathInfo = req.getPathInfo();
-
         try {
-            if (pathInfo == null || pathInfo.equals("/")) {
-                resp.getWriter().println("error in path");
+            String pathInfo = req.getPathInfo();
+
+            Optional<String> code = Validator.validateCurrencyCode(pathInfo);
+            if(code.isEmpty()){
+                ErrorHandler.sendError(400, "Invalid currency code", resp);
+                return;
             }
-            String currency = pathInfo.substring(1);
-            System.out.println(currency);
             CurrencyDAO currencyDAO = new CurrencyDAOImpl();
-            mapper.writeValue(resp.getWriter(), currencyDAO.getCurrencyByCode(currency));
+            Optional<Currency> currency = currencyDAO.getCurrencyByCode(code.get());
+            if(currency.isEmpty()){
+                ErrorHandler.sendError(404, "Currency not found", resp);
+                return;
+            }
+            resp.setContentType("application/json");
+            mapper.writeValue(resp.getWriter(), currency.get());
+            resp.setStatus(200);
         } catch (SQLException e) {
             ErrorHandler.sendError(501, "Data base error", resp);
         } catch (IOException e) {
-            ErrorHandler.sendError(401, "Fatal error", resp);
+            ErrorHandler.sendError(500, "Fatal error", resp);
         }
-
-
     }
 }
