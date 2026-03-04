@@ -58,6 +58,21 @@ public class CurrencyDAOImpl implements CurrencyDAO {
         }
     }
 
+    public Optional<Currency> getCurrencyById(Integer id) throws SQLException{
+        String sql = "SELECT * FROM currencies WHERE id=?";
+
+        try (Connection connection = connectionPool.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet resultSet = stmt.executeQuery();
+            if(!resultSet.next()){
+                return Optional.empty();
+            }
+            return Optional.of(createCurrencies(resultSet));
+        }
+    }
+
+
     private Currency createCurrencies(ResultSet resultSet) throws SQLException {
         Integer id = resultSet.getInt(1);
         String code = resultSet.getString(2);

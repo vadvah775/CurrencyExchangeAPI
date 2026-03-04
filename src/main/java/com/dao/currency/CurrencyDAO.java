@@ -8,4 +8,5 @@ public interface CurrencyDAO {
     List<Currency> getAllCurrencies() throws SQLException;
     Optional<Currency> getCurrencyByCode(String code) throws SQLException;
     Optional<Currency> addCurrency(Currency currency) throws SQLException;
+    Optional<Currency> getCurrencyById(Integer id) throws SQLException;
 }
