@@ -31,7 +31,7 @@ public class ExchangeRatesServlet extends HttpServlet {
 
             resp.setContentType("application/json");
             mapper.writeValue(resp.getWriter(), exchangeRateDAO.getAllExchangeRates());
-            resp.setStatus(200);
+            resp.setStatus(201);
         } catch (SQLException e) {
             ErrorHandler.sendError(501, "Data base error", resp);
         } catch (IOException e) {
