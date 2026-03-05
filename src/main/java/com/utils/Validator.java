@@ -1,11 +1,12 @@
 package com.utils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public class Validator {
     public static Optional<String> validateCurrencyCode(String code){
-        if (code == null || code.equals("/")) {
+        if (code == null || code.trim().isEmpty() || code.equals("/")) {
             return Optional.empty();
         }
         String currencyCode = code;
@@ -35,5 +36,14 @@ public class Validator {
             return Optional.empty();
         }
         return Optional.of(List.of(code1.get(), code2.get()));
+    }
+
+    public static Optional<BigDecimal> validateBigDecimal(String rate){
+        try{
+            double num = Double.parseDouble(rate);
+            return Optional.of(BigDecimal.valueOf(num));
+        } catch (NullPointerException | NumberFormatException e){
+            return Optional.empty();
+        }
     }
 }
