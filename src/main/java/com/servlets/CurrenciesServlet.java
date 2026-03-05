@@ -14,10 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @WebServlet(name = "currencies-servlet", value = "/currencies")

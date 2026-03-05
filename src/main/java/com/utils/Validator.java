@@ -1,8 +1,7 @@
 package com.utils;
 
-import tools.jackson.databind.JsonNode;
-
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -42,11 +41,10 @@ public class Validator {
         return Optional.of(List.of(code1.get(), code2.get()));
     }
 
-    public static Optional<BigDecimal> validateBigDecimal(String rate) {
-        System.out.println(rate);
+    public static Optional<BigDecimal> validateBigDecimal(String str) {
         try {
-            double num = Double.parseDouble(rate);
-            return Optional.of(BigDecimal.valueOf(num));
+            double num = Double.parseDouble(str);
+            return Optional.of(BigDecimal.valueOf(num).setScale(4, RoundingMode.HALF_UP));
         } catch (NullPointerException | NumberFormatException e) {
             return Optional.empty();
         }

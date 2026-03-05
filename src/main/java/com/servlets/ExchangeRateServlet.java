@@ -11,7 +11,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -90,10 +89,8 @@ public class ExchangeRateServlet extends HttpServlet {
             resp.setStatus(200);
         } catch (SQLException e) {
             ErrorHandler.sendError(500, "Data base error", resp);
-        } catch (IOException e){
-            ErrorHandler.sendError(501, "Fatal error", resp);
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            ErrorHandler.sendError(501, "Fatal error", resp);
         }
     }
 }
