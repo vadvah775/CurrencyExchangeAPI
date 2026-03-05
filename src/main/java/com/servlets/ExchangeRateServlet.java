@@ -1,8 +1,8 @@
 package com.servlets;
 
-import com.dao.currency.Currency;
-import com.dao.currency.CurrencyDAO;
-import com.dao.currency.CurrencyDAOImpl;
+import com.dao.exchange.ExchangeRate;
+import com.dao.exchange.ExchangeRateDAO;
+import com.dao.exchange.ExchangeRateDAOImpl;
 import com.utils.ErrorHandler;
 import com.utils.Validator;
 import jakarta.servlet.ServletConfig;
@@ -15,10 +15,11 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
-@WebServlet(name = "currency-servlet", value = "/currency/*")
-public class CurrencyServlet extends HttpServlet {
+@WebServlet(name = "exchange-rate-servlet", value = "/exchangeRate/*")
+public class ExchangeRateServlet extends HttpServlet {
     ObjectMapper mapper;
 
     @Override
@@ -29,23 +30,24 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        try {
+        try{
             String pathInfo = req.getPathInfo();
 
-            Optional<String> code = Validator.validateCurrencyCode(pathInfo);
-            if(code.isEmpty()){
+            Optional<List<String>> listCodes = Validator.validateTwoCurrencyCodes(pathInfo);
+            if(listCodes.isEmpty()){
                 ErrorHandler.sendError(400, "Invalid currency code", resp);
                 return;
             }
-            CurrencyDAO currencyDAO = new CurrencyDAOImpl();
-            Optional<Currency> currency = currencyDAO.getCurrencyByCode(code.get());
-            if(currency.isEmpty()){
-                ErrorHandler.sendError(404, "Currency not found", resp);
+
+            ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAOImpl();
+            Optional<ExchangeRate> exchangeRate = exchangeRateDAO.getExchangeRateByCodes(listCodes.get().get(0), listCodes.get().get(1));
+            if(exchangeRate.isEmpty()){
+                ErrorHandler.sendError(404, "Currency pair not found", resp);
                 return;
             }
             resp.setContentType("application/json");
-            mapper.writeValue(resp.getWriter(), currency.get());
-            resp.setStatus(200);
+            mapper.writeValue(resp.getWriter(), exchangeRate.get());
+
         } catch (SQLException e) {
             ErrorHandler.sendError(500, "Data base error", resp);
         } catch (IOException e) {
