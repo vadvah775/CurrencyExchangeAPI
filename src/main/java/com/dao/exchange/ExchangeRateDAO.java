@@ -9,4 +9,5 @@ public interface ExchangeRateDAO {
     List<ExchangeRate> getAllExchangeRates() throws SQLException;
     Optional<ExchangeRate> getExchangeRateByCodes(String baseCode, String targetCode) throws SQLException;
     Optional<ExchangeRate> addExchangeRate(String baseCode, String targetCode, BigDecimal rate) throws SQLException;
+    Optional<ExchangeRate> updateExchangeRate(String baseCode, String targetCode, BigDecimal rate) throws SQLException;
 }

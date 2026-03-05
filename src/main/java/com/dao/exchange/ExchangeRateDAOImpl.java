@@ -95,6 +95,33 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO {
         }
     }
 
+    @Override
+    public Optional<ExchangeRate> updateExchangeRate(String baseCode, String targetCode, BigDecimal rate) throws SQLException {
+        String sql = "UPDATE exchange_rates SET rate=? " +
+                "WHERE " +
+                "(SELECT id FROM currencies WHERE code=?)=base_currency_id AND " +
+                "(SELECT id FROM currencies WHERE code=?)=target_currency_id;";
+
+        try (Connection connection = connectionPool.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setBigDecimal(1, rate);
+            stmt.setString(2, baseCode);
+            stmt.setString(3, targetCode);
+
+            int countOfUpdatedRows = stmt.executeUpdate();
+            if(countOfUpdatedRows == 0){
+                return Optional.empty();
+            }
+
+            Optional<ExchangeRate> exchangeRate = getExchangeRateByCodes(baseCode, targetCode);
+
+            if (exchangeRate.isEmpty()) {
+                return Optional.empty();
+            }
+            return getExchangeRateByCodes(baseCode, targetCode);
+        }
+    }
+
     private ExchangeRate createExchangeRate(ResultSet resultSet) throws SQLException {
         Integer id = resultSet.getInt(1);
         Integer baseCurrencyId = resultSet.getInt(2);
