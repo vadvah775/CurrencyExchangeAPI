@@ -65,5 +65,7 @@ db.password=123
 | BaseCurrencyId   | int        | ID базовой валюты, внешний ключ на Currencies.id            |
 | TargetCurrencyId | int        | ID целевой валюты, внешний ключ на Currencies.id            |
 | Rate             | Decimal(6) | Курс обмена единицы базовой валюты к единице целевой валюты |
+
+
 Как можно понять из параметров в application.properties как база данных была выбрана postgresql, при смене базы данных стоит указать в pom.xml другой драйвер для неё.
 
